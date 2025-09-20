@@ -7,16 +7,16 @@
     <h1>Poker</h1>
     <p>Player deck</p>
     <div class="cards">
-      <Card rank="ace" type="club" color="black" />
-      <Card rank="ace" type="diamond" color="red" />
-      <Card rank="king" type="heart" color="red" />
-      <Card rank='8' type='spade' color='black'/>
+      <Card rank="1" type="club"/>
+      <Card rank="1" type="diamond"/>
+      <Card rank="13" type="heart"/>
+      <Card rank='8' type='spade'/>
     </div>
     <div class="cards">
-      <Card rank="9" type="spade" color="black" />
-      <Card rank="ace" type="diamond" color="red" />
-      <Card rank="jack" type="heart" color="red" />
-      <Card rank='queen' type='spade' color='black'/>
+      <Card rank="9" type="spade"/>
+      <Card rank="1" type="diamond"/>
+      <Card rank="11" type="heart"/>
+      <Card rank='12' type='spade'/>
     </div>
   </div>
 </main>
