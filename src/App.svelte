@@ -1,23 +1,14 @@
 <script>
-  import Card from "./Card.svelte";
+import Card from "./Card.svelte";
+import Hand from "./Hand.svelte";
 </script>
 
 <main>
   <div class="content">
     <h1>Poker</h1>
     <p>Player deck</p>
-    <div class="cards">
-      <Card rank="1" type="club"/>
-      <Card rank="1" type="diamond"/>
-      <Card rank="13" type="heart"/>
-      <Card rank='8' type='spade'/>
-    </div>
-    <div class="cards">
-      <Card rank="9" type="spade"/>
-      <Card rank="1" type="diamond"/>
-      <Card rank="11" type="heart"/>
-      <Card rank='12' type='spade'/>
-    </div>
+	<Hand />
+	
   </div>
 </main>
 
@@ -41,10 +32,4 @@
     font-weight: 400;
     opacity: 0.5;
   }
-
-  .cards{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 </style>
