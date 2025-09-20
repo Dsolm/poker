@@ -5,10 +5,7 @@ import Hand from "./Hand.svelte";
 
 <main>
   <div class="content">
-    <h1>Poker</h1>
-    <p>Player deck</p>
 	<Hand />
-	
   </div>
 </main>
 

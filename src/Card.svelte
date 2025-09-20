@@ -1,11 +1,16 @@
 <script>
-let { rank, type } = $props();
+let { rank, type, onmousedown } = $props();
 </script>
 
-<img src={`./images/card_${rank}_${type}.png`} alt="${rank} of ${type}s">
+<img
+	draggable="false"
+	src="./images/card_{rank}_{type}.png" alt="{rank} of {type}s"
+	{onmousedown}
+/>
 <style>
  img {
-		 pointer-events: none;
+		 /* Change cursor icon to grabbing hand. */
+		 cursor: grab;
 		 /* Make non-selectable */
 		 user-select: none;
 		 -moz-user-select: none;
@@ -13,9 +18,8 @@ let { rank, type } = $props();
 		 -webkit-user-select: none;
 		 -o-user-select: none;
 		 /***********************/
-		 
 		 width: 10vw;
-		 border-color: aliceblue;
+		 border: aliceblue;
 		 margin: 1vh 0.5vw;
  }
 </style>
