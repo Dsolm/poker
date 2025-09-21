@@ -1,4 +1,5 @@
 <script>
+let { draggable, cards = $bindable([]) } = $props();
 import Card from "./Card.svelte";
 import DraggableCard from "./DraggableCard.svelte";
 
@@ -19,11 +20,12 @@ function compareCards(cardA, cardB) {
 	return cardA.rank - cardB.rank;
 }
 
-let cards = $state([]);
-for (let i = 1; i <= 5; i++) {
-	cards.push({ rank: i, type: "heart" });
+if (!cards) {
+	for (let i = 1; i <= 5; i++) {
+		cards.push({ rank: i, type: "spade" });
+	}
+	cards.sort(compareCards);
 }
-cards.sort(compareCards);
 
 let selected = $state(null);
 
@@ -38,7 +40,6 @@ function handleMouseDown(event) {
 }
 
 function handleMouseMove(event) {
-	console.log(`x: {x}, y: {y}`);
 	x = event.clientX;
 	y = event.clientY;
 }
@@ -58,17 +59,17 @@ function handleMouseUp(event) {
 		{selected}
 	/>
 {/if}
+
 <div>
 	{#each cards as card, idx (idx)}
 		<Card
 			{...card}
-			onmousedown={
-				(e) => {
+			{draggable}
+			onmousedown={draggable ? (e) => {
 					selected = card;
 					cards.splice(idx, 1);
 					handleMouseDown(e);
-				}
-			}
+				} : null}
 			/>
 	{/each}
 </div>
@@ -83,10 +84,7 @@ function handleMouseUp(event) {
 		 -o-user-select: none;
 		 /***********************/
 
-		 width: 100%;
 		 diplay: flex;
-		 position: absolute;
-		 bottom: 0%;
  }
 
 </style>
