@@ -1,6 +1,7 @@
 <script>
 import Card from "./Card.svelte";
-let { x, y, selected } = $props();
+
+const { x, y, selected } = $props();
 </script>
 
 <div style="position: fixed; left: {x}; top: {y}">

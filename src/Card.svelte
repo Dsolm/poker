@@ -1,5 +1,5 @@
 <script>
-let { rank, type, onmousedown, draggable } = $props();
+const { rank, type, onmousedown, draggable } = $props();
 </script>
 
 <img
@@ -17,9 +17,11 @@ let { rank, type, onmousedown, draggable } = $props();
 		 -webkit-user-select: none;
 		 -o-user-select: none;
 		 /***********************/
-		 width: 20vh;
-		 height: 30vh;
+		 /* width: min(23vmin, 23%); */
+		 max-height: 20svh;
+		 /* width: 48%; */
 		 border: aliceblue;
+		 overflow-x: scroll;
 		 margin: 1vh 0.5vw;
  }
 </style>

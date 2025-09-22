@@ -2,14 +2,17 @@
  import Card from "./Card.svelte";
  import Hand from "./Hand.svelte";
 
+ let money = $state(0);
+ let bet = $state(null);
+
  function computeScore(deck) {
 	 let score = 0;
 	 let aces = 0;
 	 console.log(deck);
-	 for (let c of deck) {
+	 for (const c of deck) {
 		 if (c.rank >= 2 && c.rank <= 10) {
 			 score += c.rank;
-		 } else if (c.rank == 1) {
+		 } else if (c.rank === 1) {
 			 aces += 1;
 		 } else {
 			 score += 10;
@@ -37,13 +40,14 @@
  let dealerDeck = $state([randomCard(), randomCard()]);
  let playerDeck = $state([randomCard(), randomCard()]);
 
- let dealerScore = $derived.by(() => computeScore(dealerDeck));
- let playerScore = $derived.by(() => computeScore(playerDeck));
+ const dealerScore = $derived.by(() => computeScore(dealerDeck));
+ const playerScore = $derived.by(() => computeScore(playerDeck));
 
  let result = $state(null);
 
  function restart() {
 	 setTimeout(() => {
+		 bet = null;
 		 dealerDeck = [randomCard(), randomCard()];
 		 playerDeck = [randomCard(), randomCard()];
 		 result = null;
@@ -52,7 +56,7 @@
 
  function hit() {
 	 playerDeck.push(randomCard());
-	 if (playerScore == 21) {
+	 if (playerScore === 21) {
 		 stand();
 	 } else if (playerScore > 21) {
 		 result = new Promise((fulfill, reject) => {
@@ -67,20 +71,23 @@
 		 setTimeout(() => {
 			 let message = null;
 			 if (dealerScore > 21) {
+				 money += bet * 2;
 				 message = "Dealer bust!";
-			 } else if (dealerScore == playerScore) {
+			 } else if (dealerScore === playerScore) {
 				 message = "Standoff!";
 			 } else if (dealerScore > playerScore) {
-				 if (dealerScore == 21 && dealerDeck.length == 2) {
+				 if (dealerScore === 21 && dealerDeck.length === 2) {
 					 message = "Black jack. Dealer wins!";
 				 } else {
 					 message = "Dealer wins!";
 				 }
 			 } else if (playerScore > dealerScore) {
-				 if (playerScore == 21 && playerDeck.length == 2) {
+				 if (playerScore === 21 && playerDeck.length === 2) {
 					 message = "Black jack. Player wins!";
+					 money += bet * 3;
 				 } else {
 					 message = "Player wins!";
+					 money += bet * 2;
 				 }
 			 }
 			 restart();
@@ -107,58 +114,68 @@
 </script>
 
 <main>
-	<div class="content">
-		<div>
-			<Hand bind:cards={dealerDeck}/>
-			<p>Dealer: {dealerScore}</p>
-		</div>
+	<div class="deck">
+		<Hand bind:cards={dealerDeck}/>
+		<p>Dealer: {dealerScore}</p>
+	</div>
 
+	<div class="center">
 		{#if result}
 			{#await result then res}
 				<h1>{res.message}</h1>
 			{/await}
 		{:else}
-			<div>
-				<button onclick={hit}>
-					Hit
-				</button>
-				<button onclick={stand}>
-					Stand
-				</button>
-			</div>
+			<button onclick={hit}>
+				Hit
+			</button>
+			<button onclick={stand}>
+				Stand
+			</button>
 		{/if}
-		
-
-		<div>
-			<p>You: {playerScore}</p>
-			<Hand bind:cards={playerDeck}/>
-		</div>
 	</div>
-</main>
+
+	<div class="deck">
+		<p>You: {playerScore}</p>
+		<Hand bind:cards={playerDeck}/>
+	</div>
+</main> 
 
 <style>
- .content {
+ main {
+		 margin-top: 2sh;
+		 margin-bottom: 2sh;
+		 
+		 width: min(100vw, 1920px);
 		 display: flex;
-		 min-height: 100vh;
+		 height: 100svh;
 		 line-height: 1.1;
 		 flex-direction: column;
-		 justify-content: space-between;
+		 justify-content: space-evenly;
 		 align-items: center;
  }
 
- .content h1 {
-		 font-size: 3.6rem;
-		 font-weight: 700;
+ .deck {
+		 max-width: 100%;
+ }
+ 
+ .deck p {
+		 display: flex;
+		 justify-content: center;
  }
 
- div {
+ 
+ .center {
+		 flex-shrink: 1;
 		 user-select: none;
          -moz-user-select: none;
 		 -khtml-user-select: none;
 		 -webkit-user-select: none;
 		 -o-user-select: none;
+		 display: flex;
+		 justify-content: center;
+		 gap: 10px;
  }
- 
+
  button {
 		 appearance: none;
 		 backface-visibility: hidden;
@@ -188,7 +205,6 @@
 		 touch-action: manipulation;
 		 vertical-align: top;
 		 white-space: nowrap;
-
  }
 
  .content p {
@@ -199,4 +215,3 @@
 		 opacity: 0.5;
  }
 </style>
-

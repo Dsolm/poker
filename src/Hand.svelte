@@ -1,5 +1,6 @@
 <script>
-let { draggable, cards = $bindable([]) } = $props();
+const { draggable, cards = $bindable([]) } = $props();
+
 import Card from "./Card.svelte";
 import DraggableCard from "./DraggableCard.svelte";
 
@@ -77,14 +78,16 @@ function handleMouseUp(event) {
 <style>
  div {
 		 /* Make non-selectable */
-		 user-select: none;
-         -moz-user-select: none;
-		 -khtml-user-select: none;
-		 -webkit-user-select: none;
-		 -o-user-select: none;
+		 /* user-select: none;
+			-moz-user-select: none;
+			-khtml-user-select: none;
+			-webkit-user-select: none;
+			-o-user-select: none; */
 		 /***********************/
-
-		 diplay: flex;
+		 width: 100%;
+		 display: flex;
+		 flex-direction: row;
+		 overflow-x: hidden;
  }
 
-</style>
+</style> 
