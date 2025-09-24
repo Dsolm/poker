@@ -67,10 +67,10 @@ function handleMouseUp(event) {
 			{...card}
 			{draggable}
 			onmousedown={draggable ? (e) => {
-					selected = card;
-					cards.splice(idx, 1);
-					handleMouseDown(e);
-				} : null}
+						selected = card;
+						cards.splice(idx, 1);
+						handleMouseDown(e);
+						} : null}
 			/>
 	{/each}
 </div>
