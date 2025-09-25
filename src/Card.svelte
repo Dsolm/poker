@@ -1,10 +1,9 @@
 <script>
-const { rank, type, onmousedown, draggable, hidden = false } = $props();
+const { rank, type, onmousedown, draggable } = $props();
 
 import { fly } from "svelte/transition";
 </script>
 
-{#if !hidden}
 <img
 	in:fly={{ x: 600, duration: 500 }}
 	out:fly={{ y: 200, duration: 500 }}
@@ -13,8 +12,6 @@ import { fly } from "svelte/transition";
 	src="./images/card_{rank}_{type}.png" alt="{rank} of {type}s"
 	{onmousedown}
 />
-{/if}
-
 <style>
  img {
 		 /* Make non-selectable */
