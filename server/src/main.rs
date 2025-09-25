@@ -1,8 +1,7 @@
 use axum::{
-    routing::{get, post},
-    http::StatusCode,
-    Json, Router,
+    extract::{ws::WebSocket, ws::WebSocketUpgrade}, http::{StatusCode}, response::Response, routing::{any, get, post}, Json, Router
 };
+
 use serde::{Deserialize, Serialize};
 
 #[tokio::main]
@@ -14,6 +13,7 @@ async fn main() {
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(root))
+		.route("/ws", any(handler))
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user));
 
@@ -56,4 +56,22 @@ struct User {
     username: String,
 }
 
+async fn handler(ws: WebSocketUpgrade) -> Response {
+    ws.on_upgrade(handle_socket)
+}
 
+async fn handle_socket(mut socket: WebSocket) {
+    while let Some(msg) = socket.recv().await {
+        let msg = if let Ok(msg) = msg {
+            msg
+        } else {
+            // client disconnected
+            return;
+        };
+
+        if socket.send(msg).await.is_err() {
+            // client disconnected
+            return;
+        }
+    }
+}
