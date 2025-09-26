@@ -1,6 +1,11 @@
 use axum::{
-    extract::{ws::WebSocket, ws::WebSocketUpgrade}, http::{StatusCode}, response::Response, routing::{any, get, post}, Json, Router
+    Json, Router,
+    extract::ws::{Message, WebSocket, WebSocketUpgrade},
+    http::StatusCode,
+    response::Response,
+    routing::{any, get, post},
 };
+use tower_http::services::ServeDir;
 
 use serde::{Deserialize, Serialize};
 
@@ -9,11 +14,13 @@ async fn main() {
     // initialize tracing
     tracing_subscriber::fmt::init();
 
+    let static_files_service = ServeDir::new("../dist/static");
     // build our application with a route
     let app = Router::new()
         // `GET /` goes to `root`
         .route("/", get(root))
-		.route("/ws", any(handler))
+        .route("/ws", any(handler))
+        .nest_service("/static", static_files_service)
         // `POST /users` goes to `create_user`
         .route("/users", post(create_user));
 
@@ -56,22 +63,46 @@ struct User {
     username: String,
 }
 
+#[derive(Deserialize, Debug)]
+#[serde(tag="type")]
+enum ClientMessage {
+    Bet { amount: f32 },
+	Hit { token: String },
+	Stand { token: String }
+}
+
 async fn handler(ws: WebSocketUpgrade) -> Response {
+    println!("ATTEMPTING WEBSOCKET CONNECTION");
     ws.on_upgrade(handle_socket)
 }
 
 async fn handle_socket(mut socket: WebSocket) {
     while let Some(msg) = socket.recv().await {
-        let msg = if let Ok(msg) = msg {
-            msg
+        if let Ok(msg) = msg {
+			use ClientMessage::*;
+            match &msg {
+                Message::Text(utf8_bytes) => {
+                    match serde_json::from_str::<ClientMessage>(utf8_bytes.as_str()) {
+                        Ok(msg) => match msg {
+                            Bet { amount } => {
+								println!("apuesta {}€", amount);
+							},
+							Hit => {},
+							Stand => {}
+                        },
+                        Err(err) => println!("{}", err),
+                    }
+                }
+                _ => println!("invalid message"),
+            };
+
+            if socket.send(msg).await.is_err() {
+                // client disconnected
+                return;
+            }
         } else {
             // client disconnected
             return;
         };
-
-        if socket.send(msg).await.is_err() {
-            // client disconnected
-            return;
-        }
     }
 }

@@ -3,36 +3,38 @@ import Bet from "./Bet.svelte";
 import Card from "./Card.svelte";
 import Hand from "./Hand.svelte";
 
-function computeScore(deck) {
-	let score = 0;
-	let aces = 0;
+ console.log("Negar!");
+ 
+ function computeScore(deck) {
+	 let score = 0;
+	 let aces = 0;
 
-	for (const c of deck) {
-		if (c.rank >= 2 && c.rank <= 10) {
-			score += c.rank;
-		} else if (c.rank === 1) {
-			aces += 1;
-		} else {
-			score += 10;
-		}
-	}
+	 for (const c of deck) {
+		 if (c.rank >= 2 && c.rank <= 10) {
+			 score += c.rank;
+		 } else if (c.rank === 1) {
+			 aces += 1;
+		 } else {
+			 score += 10;
+		 }
+	 }
 
-	for (let i = 0; i < aces; i++) {
-		if (score + 11 <= 21) {
-			score += 11;
-		} else {
-			score += 1;
-		}
-	}
-	return score;
-}
+	 for (let i = 0; i < aces; i++) {
+		 if (score + 11 <= 21) {
+			 score += 11;
+		 } else {
+			 score += 1;
+		 }
+	 }
+	 return score;
+ }
 
-function randomCard() {
-	const suits = ["heart", "spade", "club", "diamond"];
-	return {
-		rank: Math.floor(Math.random() * 13 + 1),
-		type: suits[Math.floor(Math.random() * suits.length)],
-	};
+ function randomCard() {
+	 const suits = ["heart", "spade", "club", "diamond"];
+	 return {
+		 rank: Math.floor(Math.random() * 13 + 1),
+		 type: suits[Math.floor(Math.random() * suits.length)],
+	 };
 }
 
 let dealerDeck = $state([randomCard(), randomCard()]);
