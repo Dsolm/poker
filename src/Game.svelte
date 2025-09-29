@@ -158,7 +158,7 @@ function runDealer() {
 	{#if playerScore}
 		<p>You: {playerScore}</p>
 	{/if}
-	<Hand bind:cards={playerDeck}/>
+	<Hand draggable=true bind:cards={playerDeck}/>
 </div>
 
 

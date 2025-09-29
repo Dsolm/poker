@@ -1,12 +1,10 @@
 <script>
 const { rank, type, onmousedown, draggable } = $props();
 
-import { fly } from "svelte/transition";
 </script>
 
 <img
-	in:fly={{ x: 600, duration: 500 }}
-	out:fly={{ y: 200, duration: 500 }}
+	
 	style="cursor: {draggable ? "grab" : ""}"
 	draggable="false"
 	src="./images/card_{rank}_{type}.png" alt="{rank} of {type}s"
@@ -14,6 +12,7 @@ import { fly } from "svelte/transition";
 />
 <style>
  img {
+	z-index: 0;
 		 /* Make non-selectable */
 		 user-select: none;
 		 -moz-user-select: none;

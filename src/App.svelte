@@ -1,16 +1,21 @@
 <script>
 import Bet from "./Bet.svelte";
 import Game from "./Game.svelte";
+import Tablero from "./Tablero.svelte";
 
-const bet = $state(1);
+let bet = $state(null);
+
+
+
 </script>
 
 <main>
-	{#if bet}
+<!--	{#if bet}
 		<Game />
 	{:else}
-		<Bet />
-	{/if}
+		<Bet bind:value={bet}/>
+	{/if}-->
+	<Game />
 </main>
 
 <style>
