@@ -1,6 +1,6 @@
 import { mount } from "svelte";
 import App from "./App.svelte";
-import './socket.js'
+import "./socket.js";
 import "./index.css";
 
 const app = mount(App, {
