@@ -44,7 +44,8 @@ impl Game {
         } else if dealer_score > player_score {
             DealerWin
         } else {
-            unreachable!();
+            // unreachable!();
+            Standoff
         }
     }
 

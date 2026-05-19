@@ -1,4 +1,4 @@
-use std::{collections::HashMap, sync::Arc};
+use std::{cell::Cell, collections::HashMap, sync::Arc};
 
 use anyhow::anyhow;
 use tokio::sync::RwLock;
@@ -13,7 +13,7 @@ type PlayerId = uuid::Uuid;
 #[derive(Clone, Default)]
 pub struct PlayerGameMap {
     // TODO: Use DashMap instead
-    games: Arc<RwLock<HashMap<PlayerId, Game>>>,
+    games: Arc<RwLock<HashMap<PlayerId, Cell<Game>>>>,
 }
 
 impl BlackjackRepository for PlayerGameMap {
@@ -22,9 +22,7 @@ impl BlackjackRepository for PlayerGameMap {
         let game = games.get_mut(&req.player());
         if let Some(game) = game {
             game.hit()
-        } else {
-            Err(anyhow!("Access denied").into())
-        }
+        } 
     }
 
     async fn stand(&self, req: &StandRequest) -> Result<GameOutcome, StandError> {
@@ -32,8 +30,6 @@ impl BlackjackRepository for PlayerGameMap {
         let game = games.get_mut(&req.player());
         if let Some(game) = game {
             game.stand()
-        } else {
-            Err(anyhow!("Access denied").into())
         }
     }
 }

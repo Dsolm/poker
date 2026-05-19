@@ -1,4 +1,4 @@
-const url = "ws://localhost:8080/ws"; // Replace with your WebSocket URL
+const url = "ws://localhost:5050/ws/blackjack"; // Replace with your WebSocket URL
 export let connection = new WebSocket(url);
 
 console.log("Hello!");

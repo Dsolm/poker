@@ -37,12 +37,6 @@ pub trait BlackjackService: Clone + Send + Sync + 'static {
 /// External modules must conform to this contract – the domain is not concerned with the
 /// implementation details or underlying technology of any external code.
 pub trait BlackjackRepository: Send + Sync + Clone + 'static {
-    /// Asynchronously persist a new [Author].
-    ///
-    /// # Errors
-    ///
-    /// - MUST return [HitError::Duplicate] if an [Author] with the same [AuthorName]
-    ///   already exists.
     fn hit(
         &self,
         req: &HitRequest,

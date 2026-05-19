@@ -26,7 +26,6 @@ impl From<HitError> for ApiError {
             HitError::AlreadyStood => Self::LogicError("player already stood".to_string()),
             HitError::AlreadyBusted => Self::LogicError("player already busted".to_string()),
             HitError::Unknown(cause) => {
-                tracing::error!("{:?}\n{}", cause, cause.backtrace());
                 Self::InternalServerError("Internal server error".to_string())
             }
         }
@@ -35,10 +34,12 @@ impl From<HitError> for ApiError {
 
 impl From<StandError> for ApiError {
     fn from(source: StandError) -> Self {
+        tracing::debug!("Error: {:?}", source);
         match source {
             StandError::AlreadyStood => Self::LogicError("player already stood".to_string()),
             StandError::AlreadyBusted => Self::LogicError("player already busted".to_string()),
-            StandError::Unknown(_) => {
+            StandError::Unknown(cause) => {
+                tracing::error!("{:?}\n{}", cause, cause.backtrace());
                 Self::InternalServerError("Internal server error".to_string())
             }
         }
@@ -190,31 +191,36 @@ async fn handler<BS: BlackjackService>(
                     use BlackjackWsRequestData::*;
                     match serde_json::from_str::<BlackjackWsRequestData>(utf8_bytes.as_str()) {
                         Ok(msg) => {
+                            tracing::debug!("Request: {:?}", msg);
                             let response = match msg {
                                 Hit(req) => {
 									let response = hit::<BS>(req, state.clone()).await;
+                                    tracing::debug!("Response: {:?}", response);
                                     serde_json::to_string(&response).unwrap()
                                 },
                                 Stand(req) => {
 									let response = stand::<BS>(req, state.clone()).await;
+                                    tracing::debug!("Response: {:?}", response);
                                     serde_json::to_string(&response).unwrap()
 								},
                             };
+                            tracing::debug!("Sending: {:?}", response);
                             if socket.send(response.into()).await.is_err() {
                                 return;
                             }
                         }
-                        Err(err) => println!("{}", err),
+                        Err(err) => tracing::debug!("{}", err),
                     };
                 }
-                _ => println!("invalid message"),
+                _ => tracing::debug!("invalid message"),
             };
 
-            if socket.send(msg).await.is_err() {
-                // client disconnected
-                return;
-            }
+            // if socket.send(msg).await.is_err() {
+            //     // client disconnected
+            //     return;
+            // }
         } else {
+            tracing::debug!("invalid message");
             // client disconnected
             return;
         };
