@@ -58,7 +58,7 @@ pub trait BlackjackMetrics: Send + Sync + Clone + 'static {
     fn record_author_creation_failure(&self) -> impl Future<Output = ()> + Send;
 }
 
-/// `AuthorNotifier` triggers notifications to authors.
+/// `AuthorNotifier` triggers  to authors.
 ///
 /// Whether or the notification medium (email, SMS, etc.) is known by the business logic is a
 /// judgement call based on your use case.

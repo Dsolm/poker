@@ -178,9 +178,9 @@ pub struct StandRequest {
 }
 
 impl StandRequest {
-	pub fn new(player: uuid::Uuid) -> Self {
-		Self { player_id: player }
-	}
+    pub fn new(player: uuid::Uuid) -> Self {
+        Self { player_id: player }
+    }
     pub fn player(&self) -> uuid::Uuid {
         self.player_id
     }

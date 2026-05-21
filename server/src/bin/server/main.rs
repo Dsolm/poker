@@ -9,13 +9,13 @@ async fn main() -> anyhow::Result<()> {
     // A minimal tracing middleware for request logging.
     tracing_subscriber::fmt::init();
 
-	let repo = libcasino::outbound::memory::PlayerGameMap::default();
+    let repo = libcasino::outbound::memory::PlayerGameMap::default();
     let blackjack_service = Service::new(repo);
 
     let server_config = HttpServerConfig {
         port: &config.server_port,
     };
-	
+
     let http_server = HttpServer::new(blackjack_service, server_config).await?;
     http_server.run().await
 }

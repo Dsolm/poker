@@ -25,9 +25,7 @@ impl From<HitError> for ApiError {
         match source {
             HitError::AlreadyStood => Self::LogicError("player already stood".to_string()),
             HitError::AlreadyBusted => Self::LogicError("player already busted".to_string()),
-            HitError::Unknown(cause) => {
-                Self::InternalServerError("Internal server error".to_string())
-            }
+            HitError::Unknown(_) => Self::InternalServerError("Internal server error".to_string()),
         }
     }
 }
@@ -155,11 +153,9 @@ async fn hit<BS: BlackjackService>(
         .hit(&domain_req)
         .await
         .map_err(ApiError::from)
-        .map(|(card, outcome)| {
-            HitWsResponseData {
-                card: card.into(),
-                outcome: outcome.map(|x| x.into()),
-            }
+        .map(|(card, outcome)| HitWsResponseData {
+            card: card.into(),
+            outcome: outcome.map(|x| x.into()),
         })
 }
 
@@ -173,17 +169,12 @@ async fn stand<BS: BlackjackService>(
         .stand(&domain_req)
         .await
         .map_err(ApiError::from)
-        .map(|outcome| {
-            StandWsResponseData {
-                outcome: outcome.into(),
-            }
+        .map(|outcome| StandWsResponseData {
+            outcome: outcome.into(),
         })
 }
 
-async fn handler<BS: BlackjackService>(
-    mut socket: WebSocket,
-    state: AppState<BS>,
-) {
+async fn handler<BS: BlackjackService>(mut socket: WebSocket, state: AppState<BS>) {
     while let Some(msg) = socket.recv().await {
         if let Ok(msg) = msg {
             match &msg {
@@ -194,15 +185,15 @@ async fn handler<BS: BlackjackService>(
                             tracing::debug!("Request: {:?}", msg);
                             let response = match msg {
                                 Hit(req) => {
-									let response = hit::<BS>(req, state.clone()).await;
+                                    let response = hit::<BS>(req, state.clone()).await;
                                     tracing::debug!("Response: {:?}", response);
                                     serde_json::to_string(&response).unwrap()
-                                },
+                                }
                                 Stand(req) => {
-									let response = stand::<BS>(req, state.clone()).await;
+                                    let response = stand::<BS>(req, state.clone()).await;
                                     tracing::debug!("Response: {:?}", response);
                                     serde_json::to_string(&response).unwrap()
-								},
+                                }
                             };
                             tracing::debug!("Sending: {:?}", response);
                             if socket.send(response.into()).await.is_err() {
@@ -228,8 +219,8 @@ async fn handler<BS: BlackjackService>(
 }
 
 pub async fn blackjack_ws_handler<BS: BlackjackService>(
-	ws: WebSocketUpgrade,
-	State(app_state): State<AppState<BS>>
+    ws: WebSocketUpgrade,
+    State(app_state): State<AppState<BS>>,
 ) -> Response {
-	ws.on_upgrade(move |ws| handler(ws, app_state))
+    ws.on_upgrade(move |ws| handler(ws, app_state))
 }

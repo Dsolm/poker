@@ -13,9 +13,7 @@ impl Config {
     pub fn from_env() -> Result<Config> {
         let server_port = load_env(SERVER_PORT_KEY)?;
 
-        Ok(Config {
-            server_port,
-        })
+        Ok(Config { server_port })
     }
 }
 

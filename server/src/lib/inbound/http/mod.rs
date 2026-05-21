@@ -52,10 +52,7 @@ impl HttpServer {
 
         let router = axum::Router::new()
             // .nest("/api", api_routes())
-            .route(
-                "/ws/blackjack",
-                get(blackjack_ws_handler),
-            )
+            .route("/ws/blackjack", get(blackjack_ws_handler))
             .layer(trace_layer)
             .with_state(state);
 
